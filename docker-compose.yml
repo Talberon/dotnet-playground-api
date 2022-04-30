@@ -1,0 +1,27 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    container_name: sol-standard-db
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postrgres
+      POSTGRES_PASSWORD: postrgres
+    volumes:
+      - ./data:/var/lib/postgresql
+  pgadmin:
+      container_name: sol-standard-dbadmin
+      image: dpage/pgadmin4
+      restart: always
+      depends_on:
+        - sol-standard-db
+      environment:
+        PGADMIN_DEFAULT_EMAIL: admin@admin.com
+        PGADMIN_DEFAULT_PASSWORD: root
+      ports:
+        - "5050:80"
