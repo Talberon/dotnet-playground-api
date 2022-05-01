@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace SolStandardAPI.Models
@@ -30,16 +31,23 @@ namespace SolStandardAPI.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            var converter = new ValueConverter<int[], string>(
+            var numberArrayConverter = new ValueConverter<int[], string>(
                 array => string.Join(",", array),
                 s => s.Split(",", StringSplitOptions.RemoveEmptyEntries)
                     .Select(x => Convert.ToInt32(x))
                     .ToArray()
             );
 
+            var numberArrayComparer = new ValueComparer<int[]>(
+                (c1, c2) => c1.SequenceEqual(c2),
+                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                c => c.ToArray());
+
             modelBuilder.Entity<UnitStatistics>()
                 .Property(e => e.BaseAtkRange)
-                .HasConversion(converter);
+                .HasConversion(numberArrayConverter)
+                .Metadata
+                .SetValueComparer(numberArrayComparer);
 
             OnModelCreatingPartial(modelBuilder);
         }

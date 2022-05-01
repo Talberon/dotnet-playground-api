@@ -61,7 +61,7 @@ public class UnitsControllerTest
     {
         UnitsController controller = GenerateController();
 
-        Unit createdUnit = CreateBasicUnitWithRole(controller, "");
+        Unit createdUnit = CreateBasicUnitWithRole(controller, "Test");
 
         var newUnit = new Unit("CHANGED", new UnitStatistics
         {
@@ -109,7 +109,7 @@ public class UnitsControllerTest
     {
         UnitsController controller = GenerateController();
 
-        Unit createdUnit = CreateBasicUnitWithRole(controller, "");
+        Unit createdUnit = CreateBasicUnitWithRole(controller, "Test");
 
         IActionResult result = controller.DeleteUnit(createdUnit.Id);
         Assert.IsType<OkResult>(result);

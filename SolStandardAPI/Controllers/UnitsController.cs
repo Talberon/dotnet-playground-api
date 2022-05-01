@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using SolStandardAPI.Models;
 using SolStandardAPI.Utility;
 
@@ -15,6 +16,7 @@ namespace SolStandardAPI.Controllers
     {
         private readonly IUnitsContext db = new UnitsContext();
 
+        [ActivatorUtilitiesConstructor]
         public UnitsController()
         {
         }

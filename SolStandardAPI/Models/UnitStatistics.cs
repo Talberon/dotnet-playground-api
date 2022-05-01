@@ -20,6 +20,7 @@ namespace SolStandardAPI.Models
         CommandPoints,
     }
 
+    [Table("UnitStatistics")]
     public class UnitStatistics
     {
         private static readonly Dictionary<Stats, string> Abbreviation = new()
