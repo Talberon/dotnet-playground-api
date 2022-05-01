@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace sol_standard_api.Utility
+namespace SolStandardAPI.Utility
 {
     public static class CollectionExtensions
     {

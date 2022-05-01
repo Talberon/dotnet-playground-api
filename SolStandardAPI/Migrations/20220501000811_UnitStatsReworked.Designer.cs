@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using sol_standard_api.Models;
+using SolStandardAPI.Models;
 
 #nullable disable
 
-namespace sol_standard_api.Migrations
+namespace SolStandardAPI.Migrations
 {
     [DbContext(typeof(PostgresContext))]
-    [Migration("20220501001011_UnitStatsReworked2")]
-    partial class UnitStatsReworked2
+    [Migration("20220501000811_UnitStatsReworked")]
+    partial class UnitStatsReworked
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -66,6 +66,10 @@ namespace sol_standard_api.Migrations
 
                     b.Property<int>("Blk")
                         .HasColumnType("integer");
+
+                    b.Property<int[]>("CurrentAtkRange")
+                        .IsRequired()
+                        .HasColumnType("integer[]");
 
                     b.Property<int>("HP")
                         .HasColumnType("integer");

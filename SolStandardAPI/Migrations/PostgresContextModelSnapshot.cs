@@ -2,20 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using sol_standard_api.Models;
+using SolStandardAPI.Models;
 
 #nullable disable
 
-namespace sol_standard_api.Migrations
+namespace SolStandardAPI.Migrations
 {
     [DbContext(typeof(PostgresContext))]
-    [Migration("20220501000811_UnitStatsReworked")]
-    partial class UnitStatsReworked
+    partial class PostgresContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,10 +64,6 @@ namespace sol_standard_api.Migrations
 
                     b.Property<int>("Blk")
                         .HasColumnType("integer");
-
-                    b.Property<int[]>("CurrentAtkRange")
-                        .IsRequired()
-                        .HasColumnType("integer[]");
 
                     b.Property<int>("HP")
                         .HasColumnType("integer");

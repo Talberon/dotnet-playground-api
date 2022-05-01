@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using sol_standard_api.Models;
+using SolStandardAPI.Models;
 
-namespace sol_standard_api
+namespace SolStandardAPI
 {
     public class Program
     {

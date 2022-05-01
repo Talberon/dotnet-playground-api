@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace sol_standard_api.Models
+namespace SolStandardAPI.Models
 {
     public partial class PostgresContext : DbContext
     {

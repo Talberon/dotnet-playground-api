@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace sol_standard_api.Migrations
+namespace SolStandardAPI.Migrations
 {
     public partial class UnitStatsReworked2 : Migration
     {

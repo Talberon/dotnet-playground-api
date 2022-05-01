@@ -4,10 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using sol_standard_api.Models;
-using sol_standard_api.Utility;
+using SolStandardAPI.Utility;
+using SolStandardAPI.Models;
 
-namespace sol_standard_api.Controllers
+namespace SolStandardAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace sol_standard_api.Models
+namespace SolStandardAPI.Models
 {
     public class Unit
     {

@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace sol_standard_api.Utility;
+namespace SolStandardAPI.Utility;
 
 public static class StringExtensions
 {

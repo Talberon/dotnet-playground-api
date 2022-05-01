@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace sol_standard_api.Controllers
+namespace SolStandardAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]

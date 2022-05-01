@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using sol_standard_api.Models;
+using SolStandardAPI.Models;
 
 #nullable disable
 
-namespace sol_standard_api.Migrations
+namespace SolStandardAPI.Migrations
 {
     [DbContext(typeof(PostgresContext))]
     [Migration("20220430231540_InitialCreate")]

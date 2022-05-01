@@ -1,4 +1,4 @@
-﻿namespace sol_standard_api.Utility
+﻿namespace SolStandardAPI.Utility
 {
     public static class ArrayDeepCopier<T>
     {

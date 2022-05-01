@@ -1,6 +1,6 @@
 using System;
 
-namespace sol_standard_api
+namespace SolStandardAPI
 {
     public class WeatherForecast
     {

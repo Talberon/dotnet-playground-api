@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace sol_standard_api.Migrations
+namespace SolStandardAPI.Migrations
 {
     public partial class InitialCreate : Migration
     {
