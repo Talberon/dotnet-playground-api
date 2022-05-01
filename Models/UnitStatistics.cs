@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using sol_standard_api.Utility;
 
@@ -33,159 +35,41 @@ namespace sol_standard_api.Models
             { Stats.CommandPoints, "CP" }
         };
 
-        private int currentHP;
-        private int currentArmor;
-        private int currentCmd;
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
 
-        public int Atk => BaseAtk + AtkModifier;
-        public int Ret => BaseRet + RetModifier;
-        public int Luck => BaseLuck + LuckModifier;
-        public int Mv => BaseMv + MvModifier;
-        public int Blk => BaseBlk + BlkModifier;
+        public int HP { get; set; }
+        public int Armor { get; set; }
+        public int MaxCmd { get; set; }
+        public int[] BaseAtkRange { get; set; }
 
-        public int MaxHP { get; }
-        public int MaxArmor { get; }
-        public int MaxCmd { get; }
-        public int[] BaseAtkRange { get; }
+        public int Atk { get; set; }
+        public int Ret { get; set; }
+        public int Luck { get; set; }
+        public int Mv { get; set; }
+        public int Blk { get; set; }
 
-        public int BaseAtk { get; }
-        public int BaseRet { get; }
-        public int BaseLuck { get; }
-        public int BaseMv { get; }
-        public int BaseBlk { get; }
-
-        public int CurrentHP
+        public UnitStatistics() : this(0, 0, 0, 0, 0, 0, 0, Array.Empty<int>(), 0)
         {
-            get => currentHP;
-            set
-            {
-                int amountToSet = value;
-                if (amountToSet < 0) amountToSet = 0;
-                if (amountToSet > MaxHP) amountToSet = MaxHP;
-                currentHP = amountToSet;
-            }
         }
-
-        public int CurrentArmor
-        {
-            get => currentArmor;
-            set
-            {
-                int amountToSet = value;
-                if (amountToSet < 0) amountToSet = 0;
-                if (amountToSet > MaxArmor) amountToSet = MaxArmor;
-                currentArmor = amountToSet;
-            }
-        }
-
-        public int CurrentCmd
-        {
-            get => currentCmd;
-            set
-            {
-                int amountToSet = value;
-                if (amountToSet < 0) amountToSet = 0;
-                if (amountToSet > MaxCmd) amountToSet = MaxCmd;
-                currentCmd = amountToSet;
-            }
-        }
-
-        public int[] CurrentAtkRange { get; set; }
-
-        public int AtkModifier { get; set; }
-        public int RetModifier { get; set; }
-        public int LuckModifier { get; set; }
-        public int MvModifier { get; set; }
-        public int BlkModifier { get; set; }
-
-        public bool IsAlive => CurrentHP > 0;
-        public bool IsDead => !IsAlive;
 
         public UnitStatistics(int hp, int armor, int atk, int ret, int blk, int luck, int mv, int[] atkRange,
-            int maxCmd) :
-            this(
-                maxHP: hp,
-                maxArmor: armor,
-                baseAtk: atk,
-                baseRet: ret,
-                baseBlk: blk,
-                baseLuck: luck,
-                baseMv: mv,
-                baseAtkRange: atkRange,
-                currentHP: hp,
-                currentArmor: armor,
-                atkModifier: 0,
-                retModifier: 0,
-                blkModifier: 0,
-                luckModifier: 0,
-                mvModifier: 0,
-                currentAtkRange: atkRange,
-                currentCmd: 0,
-                maxCmd: maxCmd
-            )
+            int maxCmd)
         {
-        }
-
-        private UnitStatistics(int maxHP, int maxArmor, int baseAtk, int baseRet, int baseBlk, int baseLuck, int baseMv,
-            int[] baseAtkRange, int currentHP, int currentArmor, int atkModifier, int retModifier, int blkModifier,
-            int luckModifier, int mvModifier, int[] currentAtkRange, int currentCmd, int maxCmd
-        )
-        {
-            MaxHP = maxHP;
-            MaxArmor = maxArmor;
+            HP = hp;
+            Armor = armor;
             MaxCmd = maxCmd;
 
-            CurrentHP = currentHP;
-            CurrentArmor = currentArmor;
-            CurrentCmd = currentCmd;
-            CurrentAtkRange = ArrayDeepCopier<int>.DeepCopyArray(currentAtkRange);
+            Atk = atk;
+            Ret = ret;
+            Blk = blk;
+            Luck = luck;
+            Mv = mv;
 
-            AtkModifier = atkModifier;
-            RetModifier = retModifier;
-            LuckModifier = luckModifier;
-            BlkModifier = blkModifier;
-            MvModifier = mvModifier;
-
-            BaseAtkRange = ArrayDeepCopier<int>.DeepCopyArray(baseAtkRange);
-
-            BaseAtk = baseAtk;
-            BaseRet = baseRet;
-            BaseBlk = baseBlk;
-            BaseLuck = baseLuck;
-            BaseMv = baseMv;
+            BaseAtkRange = ArrayDeepCopier<int>.DeepCopyArray(atkRange);
         }
 
-        private UnitStatistics CloneBaseStats()
-        {
-            return new UnitStatistics(MaxHP, MaxArmor, BaseAtk, BaseRet, BaseBlk, BaseLuck, BaseMv, BaseAtkRange,
-                MaxCmd);
-        }
-
-        public override string ToString()
-        {
-            string output = string.Empty;
-
-            output += Abbreviation[Stats.Hp] + ": " + CurrentHP + "/" + MaxHP;
-            output += Environment.NewLine;
-            output += Abbreviation[Stats.Armor] + ": " + CurrentArmor + "/" + MaxArmor;
-            output += Environment.NewLine;
-            output += Abbreviation[Stats.Attack] + ": " + Atk + "/" + BaseAtk;
-            output += Environment.NewLine;
-            output += Abbreviation[Stats.Retribution] + ": " + Ret + "/" + BaseRet;
-            output += Environment.NewLine;
-            output += Abbreviation[Stats.Luck] + ": " + Luck + "/" + BaseLuck;
-            output += Environment.NewLine;
-            output += Abbreviation[Stats.Block] + ": " + Blk + "/" + BaseBlk;
-            output += Environment.NewLine;
-            output += Abbreviation[Stats.Movement] + ": " + Mv + "/" + BaseMv;
-            output += Environment.NewLine;
-            output += Abbreviation[Stats.CommandPoints] + ": " + CurrentCmd + "/" + MaxCmd;
-            output += Environment.NewLine;
-            output += string.Format(Abbreviation[Stats.AtkRange] + ": [{0}]/[{1}]", string.Join(",", CurrentAtkRange),
-                string.Join(",", BaseAtkRange));
-
-            return output;
-        }
 
         public override bool Equals(object? obj)
         {
@@ -194,25 +78,17 @@ namespace sol_standard_api.Models
 
         private bool Equals(UnitStatistics other)
         {
-            return MaxHP == other.MaxHP &&
-                   MaxArmor == other.MaxArmor &&
+            return HP == other.HP &&
+                   Armor == other.Armor &&
                    BaseAtkRange.SequenceEqual(other.BaseAtkRange) &&
-                   BaseAtk == other.BaseAtk &&
-                   BaseRet == other.BaseRet &&
-                   BaseBlk == other.BaseBlk &&
-                   BaseLuck == other.BaseLuck &&
-                   BaseMv == other.BaseMv &&
+                   Atk == other.Atk &&
+                   Ret == other.Ret &&
+                   Blk == other.Blk &&
+                   Luck == other.Luck &&
+                   Mv == other.Mv &&
                    Blk == other.Blk &&
                    Mv == other.Mv &&
-                   CurrentHP == other.CurrentHP &&
-                   CurrentArmor == other.CurrentArmor &&
-                   CurrentAtkRange.SequenceEqual(other.CurrentAtkRange) &&
-                   AtkModifier == other.AtkModifier &&
-                   RetModifier == other.RetModifier &&
-                   LuckModifier == other.LuckModifier &&
-                   MvModifier == other.MvModifier &&
-                   MaxCmd == other.MaxCmd &&
-                   CurrentCmd == other.CurrentCmd;
+                   MaxCmd == other.MaxCmd;
         }
 
         // ReSharper disable NonReadonlyMemberInGetHashCode
@@ -220,24 +96,15 @@ namespace sol_standard_api.Models
         {
             unchecked
             {
-                int hashCode = MaxHP;
-                hashCode += (hashCode * 397) ^ MaxArmor;
+                int hashCode = HP;
+                hashCode += (hashCode * 397) ^ Armor;
                 hashCode += (hashCode * 397) ^ (BaseAtkRange.GetHashCode());
-                hashCode += (hashCode * 397) ^ BaseAtk;
-                hashCode += (hashCode * 397) ^ BaseRet;
-                hashCode += (hashCode * 397) ^ BaseLuck;
-                hashCode += (hashCode * 397) ^ BaseBlk;
-                hashCode += (hashCode * 397) ^ BaseMv;
+                hashCode += (hashCode * 397) ^ Atk;
+                hashCode += (hashCode * 397) ^ Ret;
+                hashCode += (hashCode * 397) ^ Luck;
+                hashCode += (hashCode * 397) ^ Blk;
+                hashCode += (hashCode * 397) ^ Mv;
                 hashCode += (hashCode * 397) ^ MaxCmd;
-
-                hashCode += (hashCode * 397) ^ CurrentHP;
-                hashCode += (hashCode * 397) ^ CurrentArmor;
-                hashCode += (hashCode * 397) ^ (CurrentAtkRange.GetHashCode());
-                hashCode += (hashCode * 397) ^ AtkModifier;
-                hashCode += (hashCode * 397) ^ RetModifier;
-                hashCode += (hashCode * 397) ^ LuckModifier;
-                hashCode += (hashCode * 397) ^ MvModifier;
-                hashCode += (hashCode * 397) ^ CurrentCmd;
                 return hashCode;
             }
         }
@@ -245,23 +112,14 @@ namespace sol_standard_api.Models
         public UnitStatistics CloneCurrentStats()
         {
             return new(
-                maxHP: MaxHP,
-                maxArmor: MaxArmor,
-                baseAtk: BaseAtk,
-                baseRet: BaseRet,
-                baseBlk: BaseBlk,
-                baseLuck: BaseLuck,
-                baseMv: BaseMv,
-                baseAtkRange: BaseAtkRange,
-                currentHP: CurrentHP,
-                currentArmor: CurrentArmor,
-                atkModifier: AtkModifier,
-                retModifier: RetModifier,
-                blkModifier: BlkModifier,
-                luckModifier: LuckModifier,
-                mvModifier: MvModifier,
-                currentAtkRange: CurrentAtkRange,
-                currentCmd: CurrentCmd,
+                hp: HP,
+                armor: Armor,
+                atk: Atk,
+                ret: Ret,
+                blk: Blk,
+                luck: Luck,
+                mv: Mv,
+                atkRange: BaseAtkRange,
                 maxCmd: MaxCmd
             );
         }

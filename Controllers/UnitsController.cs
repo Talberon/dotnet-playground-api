@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using sol_standard_api.Models;
 using sol_standard_api.Utility;
 
@@ -10,72 +11,87 @@ namespace sol_standard_api.Controllers
     [Route("[controller]")]
     public class UnitsController : ControllerBase
     {
-        private readonly List<Unit> units = new()
-        {
-            new Unit(role: "Champion", unitStatistics: new(
-                hp: 7,
-                armor: 8,
-                atk: 4,
-                ret: 3,
-                blk: 0,
-                luck: 1,
-                mv: 5,
-                atkRange: new[] { 1 },
-                maxCmd: 5
-            )),
-            new Unit(role: "Lancer", unitStatistics: new(
-                hp: 10,
-                armor: 5,
-                atk: 5,
-                ret: 3,
-                blk: 0,
-                luck: 1,
-                mv: 5,
-                atkRange: new[] { 1 },
-                maxCmd: 5
-            )),
-            new Unit(role: "Archer", unitStatistics: new(
-                hp: 8,
-                armor: 5,
-                atk: 5,
-                ret: 3,
-                blk: 0,
-                luck: 1,
-                mv: 4,
-                atkRange: new[] { 2 },
-                maxCmd: 5
-            )),
-            new Unit(role: "Cleric", unitStatistics: new(
-                hp: 7,
-                armor: 5,
-                atk: 0,
-                ret: 0,
-                blk: 0,
-                luck: 4,
-                mv: 5,
-                atkRange: new[] { 1, 2 },
-                maxCmd: 5
-            ))
-        };
+        /*
+                // Create
+                Console.WriteLine("Inserting a new blog");
+                db.Add(new Blog { Url = "http://blogs.msdn.com/adonet" });
+                db.SaveChanges();
+
+                // Read
+                Console.WriteLine("Querying for a blog");
+                var blog = db.Blogs
+                    .OrderBy(b => b.BlogId)
+                    .First();
+
+                // Update
+                Console.WriteLine("Updating the blog and adding a post");
+                blog.Url = "https://devblogs.microsoft.com/dotnet";
+                blog.Posts.Add(
+                    new Post { Title = "Hello World", Content = "I wrote an app using EF Core!" });
+                db.SaveChanges();
+
+                // Delete
+                Console.WriteLine("Delete the blog");
+                db.Remove(blog);
+                db.SaveChanges();
+        */
 
         [HttpGet("")]
         public IEnumerable<Unit> GetUnits()
         {
-            return units;
+            using var db = new PostgresContext();
+            return db.Units
+                .Include(unit => unit.UnitStatistics)
+                .ToList();
         }
 
         [HttpGet("{index:int}")]
         public Unit? GetUnit(int index)
         {
-            if (index >= 0 && index < units.Count) return units[index];
+            using var db = new PostgresContext();
+            return db.Units
+                .Include(unit => unit.UnitStatistics)
+                .FirstOrDefault(unit => unit.Id == index);
+        }
 
-            return null;
+        [HttpDelete("{index:int}")]
+        public IActionResult DeleteUnit(int index)
+        {
+            using var db = new PostgresContext();
+            Unit? unitToRemove = db.Units
+                .Include(unit => unit.UnitStatistics)
+                .FirstOrDefault(unit => unit.Id == index);
+
+            if (unitToRemove is null) return NotFound();
+
+            db.Units.Remove(unitToRemove);
+            db.SaveChanges();
+            return Ok();
+        }
+
+        [HttpPut("{index:int}")]
+        public IActionResult UpdateUnit(int index, Unit newUnit)
+        {
+            using var db = new PostgresContext();
+            Unit? unitToModify = db.Units
+                .Include(unit => unit.UnitStatistics)
+                .FirstOrDefault(unit => unit.Id == index);
+
+            //TODO Create unit if doesn't exist
+            if (unitToModify is null) return NotFound();
+
+            db.Units.Update(unitToModify);
+            unitToModify.Role = newUnit.Role;
+            unitToModify.UnitStatistics = newUnit.UnitStatistics;
+            db.SaveChanges();
+            return Ok();
         }
 
         [HttpGet("random")]
         public Unit? GetRandomUnit()
         {
-            return units.Shuffle(Program.Random).FirstOrDefault();
+            using var db = new PostgresContext();
+            return db.Units.ToList().Shuffle(Program.Random).FirstOrDefault();
         }
     }
 }
