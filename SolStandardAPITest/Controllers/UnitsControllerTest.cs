@@ -56,25 +56,12 @@ public class UnitsControllerTest
         Assert.Equal(3, controller.GetUnits().Count());
     }
 
-
     [Fact]
-    public void ShouldUpdateUnitRole()
+    public void ShouldUpdateUnit()
     {
         UnitsController controller = GenerateController();
 
-        var originalUnit = new Unit("Test", new UnitStatistics());
-        ActionResult<Unit> createdResult = controller.CreateUnit(originalUnit);
-        Assert.Equal(originalUnit, controller.GetUnits().First());
-
-        if (createdResult.Result is not CreatedResult created)
-        {
-            throw new XunitException($"Unit was not returned: {createdResult.Value}");
-        }
-
-        if (created.Value is not Unit createdUnit)
-        {
-            throw new XunitException($"Unit was not returned: {createdResult.Value}");
-        }
+        Unit createdUnit = CreateBasicUnitWithRole(controller, "");
 
         var newUnit = new Unit("CHANGED", new UnitStatistics
         {
@@ -89,5 +76,81 @@ public class UnitsControllerTest
 
         Assert.Equal(newUnit.Role, updatedUnit?.Role);
         Assert.Equal(newUnit.UnitStatistics.Atk, updatedUnit?.UnitStatistics.Atk);
+    }
+
+    [Fact]
+    public void ShouldNotUpdateUnitThatDoesNotExist()
+    {
+        UnitsController controller = GenerateController();
+
+        var newUnit = new Unit("Test", new UnitStatistics());
+
+        IActionResult updateResult = controller.UpdateUnit(25, newUnit);
+
+        Assert.IsType<NotFoundResult>(updateResult);
+    }
+
+    [Fact]
+    public void ShouldNotUpdateUnitThatHasEmptyRole()
+    {
+        UnitsController controller = GenerateController();
+
+        Unit createdUnit = CreateBasicUnitWithRole(controller, "");
+
+        var newUnit = new Unit("", new UnitStatistics());
+
+        IActionResult updateResult = controller.UpdateUnit(createdUnit.Id, newUnit);
+
+        Assert.IsType<BadRequestObjectResult>(updateResult);
+    }
+
+    [Fact]
+    public void ShouldDeleteUnitThatExists()
+    {
+        UnitsController controller = GenerateController();
+
+        Unit createdUnit = CreateBasicUnitWithRole(controller, "");
+
+        IActionResult result = controller.DeleteUnit(createdUnit.Id);
+        Assert.IsType<OkResult>(result);
+    }
+
+    [Fact]
+    public void ShouldNotDeleteUnitThatDoesNotExist()
+    {
+        UnitsController controller = GenerateController();
+        IActionResult result = controller.DeleteUnit(1);
+        Assert.IsType<NotFoundResult>(result);
+    }
+
+    [Fact]
+    public void ShouldReturnRandomUnit()
+    {
+        UnitsController controller = GenerateController();
+        Unit firstUnit = CreateBasicUnitWithRole(controller, "Alice");
+        Unit secondUnit = CreateBasicUnitWithRole(controller, "Bob");
+
+        Unit? randomUnit = controller.GetRandomUnit();
+        Assert.NotNull(randomUnit);
+        Assert.True(randomUnit != null && (randomUnit.Equals(firstUnit) || randomUnit.Equals(secondUnit)));
+    }
+
+    private static Unit CreateBasicUnitWithRole(UnitsController controller, string role)
+    {
+        var originalUnit = new Unit(role, new UnitStatistics());
+        ActionResult<Unit> createdResult = controller.CreateUnit(originalUnit);
+        Assert.Equal(originalUnit, controller.GetUnits().Last());
+
+        if (createdResult.Result is not CreatedResult created)
+        {
+            throw new XunitException($"Unit was not returned: {createdResult.Value}");
+        }
+
+        if (created.Value is not Unit createdUnit)
+        {
+            throw new XunitException($"Unit was not returned: {createdResult.Value}");
+        }
+
+        return createdUnit;
     }
 }
