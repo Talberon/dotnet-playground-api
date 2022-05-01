@@ -11,7 +11,7 @@ using SolStandardAPI.Models;
 
 namespace SolStandardAPI.Migrations
 {
-    [DbContext(typeof(PostgresContext))]
+    [DbContext(typeof(UnitsContext))]
     [Migration("20220501000811_UnitStatsReworked")]
     partial class UnitStatsReworked
     {

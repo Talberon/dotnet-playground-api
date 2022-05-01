@@ -10,11 +10,11 @@ namespace SolStandardAPI
 {
     public class Program
     {
-        public static Random Random { get; set; } = new();
+        public static Random Random { get; } = new();
 
         public static void Main(string[] args)
         {
-            using (var db = new PostgresContext())
+            using (var db = new UnitsContext())
             {
                 List<Unit> units = new()
                 {

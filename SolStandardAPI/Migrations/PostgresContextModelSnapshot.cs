@@ -10,7 +10,7 @@ using SolStandardAPI.Models;
 
 namespace SolStandardAPI.Migrations
 {
-    [DbContext(typeof(PostgresContext))]
+    [DbContext(typeof(UnitsContext))]
     partial class PostgresContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

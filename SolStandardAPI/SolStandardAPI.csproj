@@ -36,5 +36,9 @@
     <Content Remove="SolStandardAPITest\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Service" />
+  </ItemGroup>
+
 
 </Project>

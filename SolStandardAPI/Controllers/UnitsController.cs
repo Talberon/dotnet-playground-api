@@ -4,8 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SolStandardAPI.Utility;
 using SolStandardAPI.Models;
+using SolStandardAPI.Utility;
 
 namespace SolStandardAPI.Controllers
 {
@@ -13,35 +13,20 @@ namespace SolStandardAPI.Controllers
     [Route("[controller]")]
     public class UnitsController : ControllerBase
     {
-        /*
-                // Create
-                Console.WriteLine("Inserting a new blog");
-                db.Add(new Blog { Url = "http://blogs.msdn.com/adonet" });
-                db.SaveChanges();
+        private readonly IUnitsContext db = new UnitsContext();
 
-                // Read
-                Console.WriteLine("Querying for a blog");
-                var blog = db.Blogs
-                    .OrderBy(b => b.BlogId)
-                    .First();
+        public UnitsController()
+        {
+        }
 
-                // Update
-                Console.WriteLine("Updating the blog and adding a post");
-                blog.Url = "https://devblogs.microsoft.com/dotnet";
-                blog.Posts.Add(
-                    new Post { Title = "Hello World", Content = "I wrote an app using EF Core!" });
-                db.SaveChanges();
-
-                // Delete
-                Console.WriteLine("Delete the blog");
-                db.Remove(blog);
-                db.SaveChanges();
-        */
+        public UnitsController(IUnitsContext db)
+        {
+            this.db = db;
+        }
 
         [HttpGet("")]
         public IEnumerable<Unit> GetUnits()
         {
-            using var db = new PostgresContext();
             return db.Units
                 .Include(unit => unit.UnitStatistics)
                 .ToList();
@@ -50,7 +35,6 @@ namespace SolStandardAPI.Controllers
         [HttpGet("{index:int}")]
         public Unit? GetUnit(int index)
         {
-            using var db = new PostgresContext();
             return db.Units
                 .Include(unit => unit.UnitStatistics)
                 .FirstOrDefault(unit => unit.Id == index);
@@ -59,7 +43,6 @@ namespace SolStandardAPI.Controllers
         [HttpDelete("{index:int}")]
         public IActionResult DeleteUnit(int index)
         {
-            using var db = new PostgresContext();
             Unit? unitToRemove = db.Units
                 .Include(unit => unit.UnitStatistics)
                 .FirstOrDefault(unit => unit.Id == index);
@@ -76,8 +59,6 @@ namespace SolStandardAPI.Controllers
         {
             if (unit is null) return BadRequest(new ArgumentNullException());
 
-            using var db = new PostgresContext();
-
             db.Units.Add(unit);
             db.SaveChanges();
 
@@ -87,7 +68,6 @@ namespace SolStandardAPI.Controllers
         [HttpPut("{index:int}")]
         public IActionResult UpdateUnit(int index, Unit newUnit)
         {
-            using var db = new PostgresContext();
             Unit? unitToModify = db.Units
                 .Include(unit => unit.UnitStatistics)
                 .FirstOrDefault(unit => unit.Id == index);
@@ -103,7 +83,7 @@ namespace SolStandardAPI.Controllers
             db.Units.Update(unitToModify);
 
             if (newUnit.Role.IsNullOrWhitespace()) return BadRequest("Role must be defined!");
-            
+
             unitToModify.Role = newUnit.Role;
 
             if (!newUnit.UnitStatistics.IsIdentity())
@@ -128,7 +108,6 @@ namespace SolStandardAPI.Controllers
         [HttpGet("random")]
         public Unit? GetRandomUnit()
         {
-            using var db = new PostgresContext();
             return db.Units.ToList().Shuffle(Program.Random).FirstOrDefault();
         }
     }
