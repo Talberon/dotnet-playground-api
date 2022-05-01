@@ -60,16 +60,24 @@ namespace sol_standard_api.Models
             HP = hp;
             Armor = armor;
             MaxCmd = maxCmd;
-
             Atk = atk;
             Ret = ret;
             Blk = blk;
             Luck = luck;
             Mv = mv;
-
             BaseAtkRange = ArrayDeepCopier<int>.DeepCopyArray(atkRange);
         }
 
+        public bool IsIdentity()
+        {
+            return Equals(new UnitStatistics());
+        }
+
+        public override string ToString()
+        {
+            return
+                $"UNIT STATISTICS: (HP: {HP}, Armor: {Armor}, MaxCmd: {MaxCmd}, Atk: {Atk}, Ret: {Ret}, Blk: {Blk}, Luck: {Luck}, Mv: {Mv}, BaseAtkRange: {string.Join(",", BaseAtkRange)})";
+        }
 
         public override bool Equals(object? obj)
         {

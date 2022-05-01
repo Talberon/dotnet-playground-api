@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -69,6 +71,19 @@ namespace sol_standard_api.Controllers
             return Ok();
         }
 
+        [HttpPost]
+        public ActionResult<Unit> CreateUnit(Unit? unit)
+        {
+            if (unit is null) return BadRequest(new ArgumentNullException());
+
+            using var db = new PostgresContext();
+
+            db.Units.Add(unit);
+            db.SaveChanges();
+
+            return Created($"/{unit.Id}", unit);
+        }
+
         [HttpPut("{index:int}")]
         public IActionResult UpdateUnit(int index, Unit newUnit)
         {
@@ -77,13 +92,36 @@ namespace sol_standard_api.Controllers
                 .Include(unit => unit.UnitStatistics)
                 .FirstOrDefault(unit => unit.Id == index);
 
-            //TODO Create unit if doesn't exist
-            if (unitToModify is null) return NotFound();
+            if (unitToModify is null)
+            {
+                return NotFound();
+            }
+
+            Debug.WriteLine($"Updating unit [{index}] role: {newUnit.Role} => {unitToModify.Role}");
+
 
             db.Units.Update(unitToModify);
+
+            if (newUnit.Role.IsNullOrWhitespace()) return BadRequest("Role must be defined!");
+            
             unitToModify.Role = newUnit.Role;
-            unitToModify.UnitStatistics = newUnit.UnitStatistics;
-            db.SaveChanges();
+
+            if (!newUnit.UnitStatistics.IsIdentity())
+            {
+                Debug.WriteLine(
+                    $"Updating unit [{index}] stats: {newUnit.UnitStatistics} => {unitToModify.UnitStatistics}");
+                unitToModify.UnitStatistics = newUnit.UnitStatistics;
+            }
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+
             return Ok();
         }
 
